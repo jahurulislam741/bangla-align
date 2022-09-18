@@ -1,0 +1,19 @@
+DIPHTHONGS: 
+
+IHY		/ii̯/	ii	nii "I take"		আমি নিই 
+IHU		/iu̯/	iu	biubhôl "upset"		
+EHY		/ei̯/	ei	dei "I give"
+EHU		/eu̯/	eu	ḍheu "wave"
+AEI		/ɛe̯/	ee	nee "(s)he takes"
+AAY		/ai̯/	ai	pai "I find"
+AAI 	/ae̯/	ae	pae "(s)he finds"
+AAU		/au̯/	au	pau "sliced bread"
+AAW		/ao̯/	ao	pao "you find"
+AOI		/ɔe̯/	ôe	nôe "(s)he is not"
+AOW		/ɔo̯/	ôo	nôo "you are not"
+OOY		/oi̯/	oi	noi "I am not"
+AOW		/oo̯/	oo	dhoo "you wash"
+OOU		/ou̯/	ou	nouka "boat"
+UHY		/ui̯/	ui	dhui "I wash"
+IHA		/ia/	ia	shia "a sect of religion"
+

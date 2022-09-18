@@ -1,0 +1,128 @@
+
+#####################################################################################
+######################### SECTION ONE: GETTING THINGS READY #########################
+#####################################################################################
+
+# THIS TOOLKIT IS FOR FORCE-ALIGNING BANGLA SPEECH DATA VIA THE MONTREAL-FORCED-ALIGNER AT ITS CORE
+
+# system requirements:
+	- designed to work Linux systems (tested on Linux Mint 19.3 (Tricia) which is based on Ubuntu 18.04)
+	- Python3 must be installed before running the scripts (usually it comes pre-installed in recent Linux distros)
+	- all commands need to be run from the terminal
+
+# setting up bangla-align:
+	- download zip file from: 
+	- unzip the zip file
+	- place the folder "bangla-align*" inside Documents (or whereever you like)
+
+# data preparation
+	- audio files: 
+		: only ".wav" format is supported (use only lowercase: e.g., avoid "audio.WAV"; use "audio.wav" or "AUDIO.wav")
+		: the audio file does not need to be cleaned; that is, it can contain intervals that are not expected to be force-aligned; 
+		: selective portions can be used for the alignment; this is done by transcripting only the portions of interest.
+		
+	- transcription textgrids: 
+		: only Praat textgrids are supported as the transcription files, no other file types
+		: annotate the audio files in Praat to create transcription textgrids
+		: transcribe only the parts of the audio that are to be force-aligned; rest can be kept blank
+		: use Avro to type in Bangla texts
+		: be sure to check if the textgrids are saved in Unicode text; in Praat, this option can be checked/changed from the menu options: "Praat >> Preferences >> Text writing preferences..." >> UTF-8
+		: if copying and pasting text from somewhere else, make sure there is no "newline" character at the end of any transcription interval 
+		: see the sample transcription TGs for references 
+		
+# placement of the data files
+	- place all the audio files and their corresponding transcription textgrids (bangla orthography) inside the folder "input_audio_and_transcription_tgs" (DO NOT change the name of this folder)
+	- each audio file must have a corresponding transcription textgrid
+
+# DO NOT DELETE/MODIFY THE FOLLOWING FOLDERS
+	- "bangla_aligner"
+	- "files_required_for_scripts"
+	
+# getting the terminal ready
+	- open a new terminal on the linux machine
+	- navigate to the folder "bangla-align-linux*"
+	- if it has been put inside Documents folder, typing "cd Documents/bangla-aligne-linux*" should take you there
+	- the console prompt should show something like this: yourusername@computername: ~/Documents/bangla-align-linux*"$ (if you placed the aligner folder inside Documents)
+
+# test your python3
+    - type "python3 --version" in the console and hit Enter
+    - if python3 is properly installed, it should should the version number  3.5.0 or later; otherwise, check/(re)install python3 on your system
+
+
+
+
+#####################################################################################
+###################### SECTION TWO: DOING ALIGNMENT (DEFAULT) #######################
+#####################################################################################
+
+# FINALLY, THE ACTUALLY PROCESSING IN TWO STEPS
+# STEP ONE: running scripts to create phoneme dictionary
+    - type "bash Script_1_generate_dictionary.sh" and hit enter to run the script "generate_dictionary.sh"
+	- running this script will do the following: 
+		: it will create a phoneme dictionary named "temp_dict_bangla_ortho.dict" (which is required for the mfa aligner)
+			- you should inspect all the entries in this file and hand-correct any faulty phonemes
+		: if the textgrids contain any word that were not available in the aligner dictionary (which is very likely, given that it is a small dictionary at this moment), it will create a file named "oov_with_phoneme_suggestions.txt"; crucially, the aligner will create tentative entries with phoneme suggestions based on some rules 
+			- hand-correct the entries carefully to include the 'correct pronunciations' of each word
+
+# STEP TWO: running the mfa aligner and post-processing
+	- go back to the terminal console; type "bash Script_2_mfa_align_and_postprocessing.sh" and hit Enter
+    - running this script will do several stuff (patiently read through this):
+        1. PREPARE FILES FOR MFA ALIGNER: it will run the python script "create_temp_dict_bangla_ortho_new" inside the folder "bangla-aligner". This script does the following things: 
+            - it adds an extra character 'X' to each of the words in "temp_dict_bangla_ortho.dict" and "oov_with_phoneme_suggestions.txt" (this is done to prevent MFA aligner to consider some word-final bangla diacritics as punctuations and strip them off)
+            - it then creates a new file "temp_dict_bangla_ortho_new.dict" combining the entries in "temp_dict_bangla_ortho.dict" and "oov_with_phoneme_suggestions.txt" 
+            - it creates a folder named "temp_folder_mfa_input" to store intermediate files to be used to feed the MFA aligner
+            - it adds 'X' to words in the input TextGrids files and writes them into the newly created "temp_folder_mfa_input" folder
+            - it copies all the audio files from "input_audio_and_transcription_tgs" to "temp_folder_mfa_input"
+            - it deletes the the folder named "temp", if exists (this helps when running the aligner multilple times to get rid of the previous run)  
+ 
+        2. RUN MFA ALIGNER: 
+            - it will force-align the input files using the pretrained acoustic models provided in bangla.zip
+            - it will store the force-aligned TGs in a folder named "temp_output_tgs" (but there is still a final 'X' character with each word)
+
+        3. REMOVAL OF WORD-FINAL 'X' FROM TG AND CLEAN UP THE AUXILIARY FILES/FOLDERS
+            - it the script "C_post_processing.py" is run to do the following: 
+                - it removes the word-final 'x' characters in the aligned TGs
+                - it stores aligned files in a folder named "Z_final_aligned_TGs"
+                - it stores the 'corrected' entries in "temp_dict_bangla_ortho.dict" and in "oov_with_phoneme_suggestions.txt" in the "master_phoneme_dictionary.txt"
+                - it deletes auxialiry folders: 
+
+
+#####################################################################################
+###################### SECTION TWO: ALIGNING WITHOUT PRETRAINED MODEL (WITH DATA ONLY) #######################
+#####################################################################################
+
+# STEP ONE: running scripts to create phoneme dictionary
+    - type "bash generate_dictionary.sh" and hit enter to run the script "generate_dictionary.sh"
+	- running this script will do the following: 
+		: it will create a phoneme dictionary named "temp_dict_bangla_ortho.dict" (which is required for the mfa aligner)
+			- you should inspect all the entries in this file and hand-correct any faulty phonemes
+		: if the textgrids contain any word that were not available in the aligner dictionary (which is very likely, given that it is a small dictionary at this moment), it will create a file named "oov_with_phoneme_suggestions.txt"; crucially, the aligner will create tentative entries with phoneme suggestions based on some rules 
+			- hand-correct the entries carefully to include the 'correct pronunciations' of each word
+
+# STEP TWO: running the mfa aligner and post-processing
+	- go back to the terminal console; type "bash mfa_train_and_align_and_postprocessing.sh" and hit Enter
+    - running this script will do several things (patiently read through this):
+        
+        1. PREPARE FILES FOR MFA ALIGNER: it will run the python script "create_temp_dict_bangla_ortho_new" inside the folder "bangla-aligner". This script does the following things: 
+            - it adds an extra character 'X' to each of the words in "temp_dict_bangla_ortho.dict" and "oov_with_phoneme_suggestions.txt" (this is done to prevent MFA aligner to consider some word-final bangla diacritics as punctuations and strip them off)
+            - it then creates a new file "temp_dict_bangla_ortho_new.dict" combining the entries in "temp_dict_bangla_ortho.dict" and "oov_with_phoneme_suggestions.txt" 
+            - it creates a folder named "temp_folder_mfa_input" to store intermediate files to be used to feed the MFA aligner
+            - it adds 'X' to words in the input TextGrids files and writes them into the newly created "temp_folder_mfa_input" folder
+            - it copies all the audio files from "input_audio_and_transcription_tgs" to "temp_folder_mfa_input"
+            - it deletes the the folder named "temp", if exists (this helps when running the aligner multilple times to get rid of the previous run)  
+ 
+        2. RUN MFA ALIGNER:  : 
+            - it will simultaneously train and align the input files using the info from the dictionary file 
+            - it will store the force-aligned TGs in a folder named "temp_output_tgs" (but there is still a final 'X' character with each word)
+            - finally, it will save the trained acoustic models into a zip file named "saved_model.zip"; this zip file can be used to later alignment using mfa_align
+
+        3. REMOVAL OF WORD-FINAL 'X' FROM TG AND CLEAN UP THE AUXILIARY FILES/FOLDERS
+            - runs the script "C_post_processing.py" to do the following: 
+                - it removes the word-final 'x' characters in the aligned TGs
+                - it stores aligned files in a folder named "Z_final_aligned_TGs"
+                - it stores the 'corrected' entries in "temp_dict_bangla_ortho.dict" and in "oov_with_phoneme_suggestions.txt" in the "master_phoneme_dictionary.txt"
+                - it deletes auxialiry folders: 
+
+######################### THE END #########################
+
+
