@@ -16,7 +16,7 @@ Here are the major steps of force-algning Bangla speech:
 
 5. If any word was not found in the master phoneme dictionary, another file named "oov_with_suggestions.txt" will also be generated; inspect this file and correct errors
 
-6. 3. type the following command in the terminal to run run Script_2...
+6. type the following command in the terminal to run run Script_2...
 
     $ bash Script_2_mfa_align_and_postprocessing.sh
 
