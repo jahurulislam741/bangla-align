@@ -1,4 +1,6 @@
-
+Bangla-align is a toolkit for force-aligning Bangla/Bengali. It is based on the Montreal Forced Aligner. 
+INPUT: 1) audio files, 2) corresponding "sentence-level" transcription as Praat TextGrids 
+OUTPUT: Praat TextGrids with Phoneme-level annotations
 
 1. Place the audio and their corresponding transcription TextGrids inside the folder "input_audio_and_transcription_tgs"
 
