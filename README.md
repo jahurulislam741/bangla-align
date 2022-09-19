@@ -17,7 +17,4 @@
 7. The final output TextGrids will be generated under a new folder named "Z_final_aligned_tgs"
 
 
-
-
-# bangla-align
 # bangla-align
