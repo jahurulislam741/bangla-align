@@ -1,26 +1,20 @@
-Bangla-align is a toolkit for force-aligning Bangla/Bengali. It is based on the Montreal Forced Aligner. 
-INPUT: 1) audio files, 2) corresponding "sentence-level" transcription as Praat TextGrids 
-OUTPUT: Praat TextGrids with Phoneme-level annotations.
+Requirements: 
+- python (use Miniconda/Anaconda; the use its command prompt)
+- mfa
+- ffmpeg
 
-Here are the major steps of force-algning Bangla speech:
+Steps to follow; run the following commands in the terminal in sequence (On Windows, replace "/" with "\" in the filepaths): 
+ 
+1. $ python bangla_aligner/A_generate_temp_dict.py
+[This script creates a temporary dictionary and an OOV file (when found); be sure to inspect and manually correct these two files before moving to the next step.]
 
-1. Place the audio and their corresponding transcription TextGrids inside the folder "input_audio_and_transcription_tgs"
+2. $ python bangla_aligner/B_create_temp_dict_bangla_ortho_new.py
 
-2. Start a terminal window and change directory to "bangla-align*"
+3. $ mfa validate temp_folder_mfa_input/ temp_dict_bangla_ortho_new.dict bangla_aligner/bangla.zip 
 
-3. type the following command in the terminal to run run Script_1...
+4. $ mfa align temp_folder_mfa_input/ temp_dict_bangla_ortho_new.dict bangla_aligner/bangla.zip temp_output_tgs -t temp
 
-    $ bash Script_1_generate_dictionary.sh
-
-4. A file named "temp_dict_bangla_ortho.dict" will be generated; inspect this file and correct any error in pronunciation of any word
-
-5. If any word was not found in the master phoneme dictionary, another file named "oov_with_suggestions.txt" will also be generated; inspect this file and correct errors
-
-6. type the following command in the terminal to run run Script_2...
-
-    $ bash Script_2_mfa_align_and_postprocessing.sh
-
-7. The final output TextGrids will be generated under a new folder named "Z_final_aligned_tgs"
-
+5. $ python bangla_aligner/C_post_processing.py
 
 # bangla-align
+
