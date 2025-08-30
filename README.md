@@ -18,3 +18,7 @@ Steps to follow; run the following commands in the terminal in sequence (On Wind
 
 # bangla-align
 
+## Citation:
+Please cite the following paper if you are using Bangla-Align in any form: 
+- Islam, M. J. (2024). Bangla-Align: A forced-aligning toolkit for annotating Bangla speech. TESOL Bangladesh Journal (TBJ), 175-194.
+
